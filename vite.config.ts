@@ -52,23 +52,13 @@ export default defineConfig(() => {
               open: true
             }) : null,
           SlidePlugin(),
-          // 【关键修改】这里删除了 inject-cdn-head 和 viteExternalsPlugin
         ],
         build: {
+          chunkSizeWarningLimit: 2000,
           rollupOptions: {
             output: {
-              manualChunks(id) {
-                if (id.includes('node_modules/@iconify') || id.includes('~icons')) {
-                  return 'icons';
-                }
-                if (id.includes('utils') || id.includes('hooks')) {
-                  return 'utils'
-                }
-                // 这里移除了 isCdnBuild 的判断，让它在任何情况下都正常分包
-                if (id.includes('dialog')) {
-                  return 'dialog'
-                }
-              }
+              // 彻底取消手动分包，防止加载顺序报错
+              manualChunks: undefined 
             }
           }
         },
